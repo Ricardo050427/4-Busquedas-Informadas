@@ -32,11 +32,10 @@ class PbCamionMagico(busquedas.ProblemaBusqueda):
     
     """
     def __init__(self, meta):
-        self.meta = meta
-        return meta
+        pass
 
     def acciones(self, estado):
-        self.estado = estado
+        posicion, meta = estado
         acciones = []
         if estado <= self.meta:
             acciones.append("un paso")
@@ -47,18 +46,19 @@ class PbCamionMagico(busquedas.ProblemaBusqueda):
         return acciones
 
     def sucesor(self, estado, accion):
+        posicion, meta = estado
         if accion == 'un paso':
-            estado_sucesor = estado + 1
+            estado_sucesor = (posicion + 1, meta)
             costo_local = 1
-
         elif accion == 'camion magico':
-            estado_sucesor = estado * 2
+            estado_sucesor = (posicion * 2, meta)
             costo_local = 2
 
         return estado_sucesor, costo_local
 
     def terminal(self, estado):
-        return self.estado == self.meta
+        posicion, meta = estado
+        return posicion == meta
 
     @staticmethod
     def bonito(estado):
@@ -66,7 +66,8 @@ class PbCamionMagico(busquedas.ProblemaBusqueda):
         El prettyprint de un estado dado
 
         """
-        return print(f"Posicion: {estado}")
+        posicion, meta = estado
+        return print(f"Posicion: {posicion} Meta: {meta}")
  
 
 # ------------------------------------------------------------
@@ -79,8 +80,8 @@ def h_1_camion_magico(nodo):
     PLATICADA DE PORQUÉ CREES QUE LA HEURÍSTICA ES ADMISIBLE
 
     """
-    estado_actual = nodo.estado
-    actual = 0
+    estado_actual, meta = nodo.estado
+    actual = meta
     costo_estimado = 0
 
     while actual > estado_actual:
