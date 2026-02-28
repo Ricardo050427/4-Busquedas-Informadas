@@ -79,9 +79,19 @@ def h_1_camion_magico(nodo):
     PLATICADA DE PORQUÉ CREES QUE LA HEURÍSTICA ES ADMISIBLE
 
     """
+    estado_actual = nodo.estado
+    actual = 0
+    costo_estimado = 0
 
-    return 0
+    while actual > estado_actual:
+        if actual % 2 == 0 and (actual // 2) >= estado_actual:
+            actual = actual // 2
+            costo_estimado += 2
+        else:
+            actual -= 1
+            costo_estimado += 1
 
+    return costo_estimado
 
 # ------------------------------------------------------------
 #  Desarrolla otra política admisible.
