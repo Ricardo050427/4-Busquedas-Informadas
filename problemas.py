@@ -31,17 +31,34 @@ class PbCamionMagico(busquedas.ProblemaBusqueda):
     ----------------------------------------------------------------------------------
     
     """
-    def __init__(self):
-        raise NotImplementedError('Hay que hacerlo de tarea')
+    def __init__(self, meta):
+        self.meta = meta
+        return meta
 
     def acciones(self, estado):
-        raise NotImplementedError('Hay que hacerlo de tarea')
+        self.estado = estado
+        acciones = []
+        if estado <= self.meta:
+            acciones.append("un paso")
+
+        if estado * 2 <= self.meta:
+            acciones.append("camion magico")
+
+        return acciones
 
     def sucesor(self, estado, accion):
-        raise NotImplementedError('Hay que hacerlo de tarea')
+        if accion == 'un paso':
+            estado_sucesor = estado + 1
+            costo_local = 1
+
+        elif accion == 'camion magico':
+            estado_sucesor = estado * 2
+            costo_local = 2
+
+        return estado_sucesor, costo_local
 
     def terminal(self, estado):
-        raise NotImplementedError('Hay que hacerlo de tarea')
+        return self.estado == self.meta
 
     @staticmethod
     def bonito(estado):
@@ -49,7 +66,7 @@ class PbCamionMagico(busquedas.ProblemaBusqueda):
         El prettyprint de un estado dado
 
         """
-        raise NotImplementedError('Hay que hacerlo de tarea')
+        return print(f"Posicion: {estado}")
  
 
 # ------------------------------------------------------------
@@ -62,6 +79,7 @@ def h_1_camion_magico(nodo):
     PLATICADA DE PORQUÉ CREES QUE LA HEURÍSTICA ES ADMISIBLE
 
     """
+
     return 0
 
 
