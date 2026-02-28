@@ -247,7 +247,6 @@ def busqueda_A_estrella(problema, s0, heuristica):
     @param estado inicial: El estado inicial del problema.
 
     @return Un objeto tipo Nodo con la estructura completa
-
     """
     nodo_inicial = NodoBusqueda(s0)
     f_n = nodo_inicial.costo + heuristica(nodo_inicial)

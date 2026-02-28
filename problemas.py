@@ -57,6 +57,7 @@ class PbCamionMagico(busquedas.ProblemaBusqueda):
         return estado_sucesor, costo_local
 
     def terminal(self, estado):
+        # Terminamos cuando nuestro estado sea exactamente igual a la meta
         posicion, meta = estado
         return posicion == meta
 
@@ -127,31 +128,49 @@ def h_2_camion_magico(nodo):
 
 class PbCuboRubik(busquedas.ProblemaBusqueda):
     """
-    La clase para el modelo de cubo de rubik, documentación, no olvides poner
-    la documentación de forma clara y concisa.
-    
-    https://en.wikipedia.org/wiki/Rubik%27s_Cube
-    
+    Modelo del Cubo de Rubik.
+    Tenemos como estado una tupla de 54 enteros (0 al 5) representando los colores del cubo.
+    El orden de las caras seria el siguiente:
+    0:Arriba(U), 1:Izquierda(L), 2:Frente(F), 3:Derecha(R), 4:Atras(B), 5:Abajo(D)
     """
+
     def __init__(self):
-        raise NotImplementedError('Hay que hacerlo de tarea')
+        # Generamos dinámicamente la tupla meta, nueve ceroos, nueve unos, etc.
+        # Esto crea la tupla de 54 elementos para el cubo resuelto.
+        self.meta = tuple([i // 9 for i in range(54)])
+
+        # Las 12 acciones del cubo:
+        # Giros de 90 grados en sentido horario (U, D, L, R, F, B)
+        # Giros de 90 grados en sentido antihorario (U', D', L', R', F', B')
+        self.acciones_posibles = ['U', 'D', 'L', 'R', 'F', 'B', "U'", "D'", "L'", "R'", "F'", "B'"]
 
     def acciones(self, estado):
-        raise NotImplementedError('Hay que hacerlo de tarea')
+        # Todas las acciones son legales siempre
+        return self.acciones_posibles
 
     def sucesor(self, estado, accion):
         raise NotImplementedError('Hay que hacerlo de tarea')
 
     def terminal(self, estado):
-        raise NotImplementedError('Hay que hacerlo de tarea')
+        # Terminamos cuando nuestro estado sea exactamente igual al cubo resuelto
+        return estado == self.meta
 
     @staticmethod
     def bonito(estado):
         """
-        El prettyprint de un estado dado
-
+        Imprime el cubo "desplegado" en forma de cruz para visualizarlo en la consola.
         """
-        raise NotImplementedError('Hay que hacerlo de tarea')
+        s = estado
+        res = f"      {s[0]}{s[1]}{s[2]}\n"
+        res += f"      {s[3]}{s[4]}{s[5]}\n"
+        res += f"      {s[6]}{s[7]}{s[8]}\n"
+        res += f"{s[9]}{s[10]}{s[11]} {s[18]}{s[19]}{s[20]} {s[27]}{s[28]}{s[29]} {s[36]}{s[37]}{s[38]}\n"
+        res += f"{s[12]}{s[13]}{s[14]} {s[21]}{s[22]}{s[23]} {s[30]}{s[31]}{s[32]} {s[39]}{s[40]}{s[41]}\n"
+        res += f"{s[15]}{s[16]}{s[17]} {s[24]}{s[25]}{s[26]} {s[33]}{s[34]}{s[35]} {s[42]}{s[43]}{s[44]}\n"
+        res += f"      {s[45]}{s[46]}{s[47]}\n"
+        res += f"      {s[48]}{s[49]}{s[50]}\n"
+        res += f"      {s[51]}{s[52]}{s[53]}\n"
+        return res
  
 
 # ------------------------------------------------------------
