@@ -149,7 +149,71 @@ class PbCuboRubik(busquedas.ProblemaBusqueda):
         return self.acciones_posibles
 
     def sucesor(self, estado, accion):
-        raise NotImplementedError('Hay que hacerlo de tarea')
+        """
+        Calcula el nuevo estado del cubo despues de aplicar un giro.
+
+        Un giro horario de una cara implica dos cosas:
+        Rotar los 8 colores de la cara (8 por que el centro no se mueve)
+        misma y rotar los 12 cuadritos. son 12 por que tambien se cuentan
+        los de los bordes de las 4 caras adyacentes.
+        En lugar de programar la logica inversa para los giros antihorarios
+        simplemente ejecutamos el giro horario 3 veces.
+        """
+        s = list(estado)
+        costo_local = 1
+
+        # Determina cuantas veces aplicar el giro base
+        veces = 3 if "'" in accion else 1
+        movimiento_base = accion[0]
+
+        for _ in range(veces):
+            if movimiento_base == 'U':
+                # cara de arriba
+                s[0], s[1], s[2], s[5], s[8], s[7], s[6], s[3] = s[6], s[3], s[0], s[1], s[2], s[5], s[8], s[7]
+                # Bordes: F -> L -> B -> R -> F
+                s[9:12], s[36:39], s[27:30], s[18:21] = s[18:21], s[9:12], s[36:39], s[27:30]
+
+            elif movimiento_base == 'D':
+                # cara de abajo
+                s[45], s[46], s[47], s[50], s[53], s[52], s[51], s[48] = s[51], s[48], s[45], s[46], s[47], s[50], s[
+                    53], s[52]
+                # Bordes: F -> R -> B -> L -> F
+                s[15:18], s[24:27], s[33:36], s[42:45] = s[42:45], s[15:18], s[24:27], s[33:36]
+
+            elif movimiento_base == 'F':
+                # cara de en frente
+                s[18], s[19], s[20], s[23], s[26], s[25], s[24], s[21] = s[24], s[21], s[18], s[19], s[20], s[23], s[
+                    26], s[25]
+                # Bordes (cruzan filas y columnas): U -> R -> D -> L -> U
+                s[6], s[7], s[8], s[27], s[30], s[33], s[47], s[46], s[45], s[17], s[14], s[11] = \
+                    s[17], s[14], s[11], s[6], s[7], s[8], s[27], s[30], s[33], s[47], s[46], s[45]
+
+            elif movimiento_base == 'L':
+                # cara de la izquierda
+                s[9], s[10], s[11], s[14], s[17], s[16], s[15], s[12] = s[15], s[12], s[9], s[10], s[11], s[14], s[17], \
+                s[16]
+                # Bordes: U -> F -> D -> B -> U
+                s[0], s[3], s[6], s[18], s[21], s[24], s[45], s[48], s[51], s[44], s[41], s[38] = \
+                    s[44], s[41], s[38], s[0], s[3], s[6], s[18], s[21], s[24], s[45], s[48], s[51]
+
+            elif movimiento_base == 'R':
+                # cara de la derecha
+                s[27], s[28], s[29], s[32], s[35], s[34], s[33], s[30] = s[33], s[30], s[27], s[28], s[29], s[32], s[
+                    35], s[34]
+                # Bordes: U -> B -> D -> F -> U
+                s[2], s[5], s[8], s[42], s[39], s[36], s[47], s[50], s[53], s[20], s[23], s[26] = \
+                    s[20], s[23], s[26], s[2], s[5], s[8], s[42], s[39], s[36], s[47], s[50], s[53]
+
+            elif movimiento_base == 'B':
+                # cara trasera
+                s[36], s[37], s[38], s[41], s[44], s[43], s[42], s[39] = s[42], s[39], s[36], s[37], s[38], s[41], s[
+                    44], s[43]
+                # Bordes: U -> L -> D -> R -> U
+                s[2], s[1], s[0], s[9], s[12], s[15], s[51], s[52], s[53], s[35], s[32], s[29] = \
+                    s[35], s[32], s[29], s[2], s[1], s[0], s[9], s[12], s[15], s[51], s[52], s[53]
+
+        # Convertimos de regreso a tupla
+        return tuple(s), costo_local
 
     def terminal(self, estado):
         # Terminamos cuando nuestro estado sea exactamente igual al cubo resuelto
