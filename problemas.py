@@ -242,11 +242,20 @@ class PbCuboRubik(busquedas.ProblemaBusqueda):
 # ------------------------------------------------------------
 def h_1_problema_1(nodo):
     """
-    DOCUMENTA LA HEURÍSTICA QUE DESARROLLES Y DA UNA JUSTIFICACIÓN
-    PLATICADA DE PORQUÉ CREES QUE LA HEURÍSTICA ES ADMISIBLE
-
+    Esta heuristica cuenta cuantas estampas estan fuera de su lugar original.
+    Asume un escenario ficticio muy optimista donde un solo giro del cubo 
+    pudiera arreglar hasta 24 estampas de golpe. 
+    Es admisible porque al asumir que arreglamos mas piezas por turno, 
+    siempre subestimara la cantidad de movimientos reales necesarios.
     """
-    return 0
+    # generamos la meta perfecta para comparar
+    meta = tuple([i // 9 for i in range(54)])
+
+    # contamos cuantos cuadros no coinciden con la meta
+    cuadros_mal = sum(1 for i in range(54) if nodo.estado[i] != meta[i])
+
+    # dividimos entre 24, el truco  de (cuadros_mal + 23) // 24 equivale a redondear hacia arriba
+    return (cuadros_mal + 23) // 24
 
 
 # ------------------------------------------------------------
@@ -256,11 +265,20 @@ def h_1_problema_1(nodo):
 # ------------------------------------------------------------
 def h_2_problema_1(nodo):
     """
-    DOCUMENTA LA HEURÍSTICA DE DESARROLLES Y DA UNA JUSTIFICACIÓN
-    PLATICADA DE PORQUÉ CREES QUE LA HEURÍSTICA ES ADMISIBLE
+    Esta heuristica tambien cuenta las estampas desordenadas, pero usa el 
+    limite fisico real del cubo, un giro mueve exactamente 20 cuadros.
+    Es admisible porque asume que cada movimiento arreglara el maximo posible 
+    de piezas (20), dandonos el costo minimo absoluto de movimientos reales.
 
+    Como esta heuristica usa el limite fisico real (20) en lugar del ficticio (24), 
+    su estimacion siempre estara mas cerca del costo verdadero. Por lo tanto, 
+    h2 domina a h1, guiando a A* con mayor precision y explorando menos nodos.
     """
-    return 0
+    meta = tuple([i // 9 for i in range(54)])
+    cuadros_mal = sum(1 for i in range(54) if nodo.estado[i] != meta[i])
+
+    # Dividimos entre 20 (el limite real). Redondeamos hacia arriba.
+    return (cuadros_mal + 19) // 20
 
 
 
@@ -302,7 +320,13 @@ if __name__ == "__main__":
     
     # Compara los métodos de búsqueda para el problema del cubo de rubik
     # con las heurísticas que desarrollaste
-    #pos_inicial = XXXXXXXXXX  # <--- PONLE LA POSICIÓN INICIAL QUE QUIERAS
-    #problema = PbCuboRubik( XXXXXXXXXX )  # <--- PONLE LOS PARÁMETROS QUE NECESITES
-    #compara_metodos(problema, h_1_problema_1, h_2_problema_1)
+    print("\n" + "=" * 50)
+    print("=== RESOLVIENDO EL CUBO RUBIK ===")
+    problema = PbCuboRubik()
+    # en vez de escribir una tupla giro dos veces el cubo resuelto
+    cubo_resuelto = problema.meta
+    cubo_revuelto1, _ = problema.sucesor(cubo_resuelto, 'U')
+    pos_inicial, _ = problema.sucesor(cubo_revuelto1, 'R')
+
+    compara_metodos(problema, pos_inicial, h_1_problema_1, h_2_problema_1)
     
